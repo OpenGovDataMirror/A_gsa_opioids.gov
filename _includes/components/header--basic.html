@@ -1,0 +1,61 @@
+{% if header %}
+<header class="usa-header usa-header-basic" role="banner">
+    <div class="usa-banner site-section-dark">
+    </div>
+  <div class="usa-nav-container">
+    <div class="usa-navbar">
+      <button class="usa-menu-btn">Menu</button>
+      <div class="site-logo" id="logo">
+        {% if site.logo %}
+          <a href="{{ #home | prepend: site.baseurl }}"><img src="{{ site.logo | prepend: site.baseurl }}" alt="{{ site.title }}"></a>
+        {% else %}
+        <em class="usa-logo-text">
+          <a href="{% if header.href %}{{ header.href }}{% else %}{{ site.baseurl }}/{% endif %}" title="Home">
+            {{ header.title | default: site.title }}
+          </a>
+        </em>
+        {% endif %}
+      </div>
+    </div>
+
+    <nav role="navigation" class="usa-nav">
+      <div class="usa-nav-inner">
+        <button class="usa-nav-close">
+          <img src="{{ site.baseurl }}/assets/uswds/img/close.svg" alt="close">
+        </button>
+
+        {% assign _primary = header.primary.links %}
+        {% assign primary_links = site.data.navigation[_primary] | default: _primary %}
+        {% if primary_links %}
+        <ul class="usa-nav-primary usa-accordion">
+          {% for _section in primary_links %}
+          <li>
+            {% if _section.links %}
+              {% assign section_links = site.data.navigation[_section.links] | default: _section.links %}
+              {% assign _section_id = _section.id %}
+              {% unless _section_id %}{% assign _section_id = 'nav-' | append: forloop.index %}{% endunless %}
+            <button class="usa-accordion-button usa-nav-link" aria-expanded="false" aria-controls="{{ _section_id }}">
+              <span>{{ _section.text }}</span>
+            </button>
+            <ul id="{{ _section_id }}" class="usa-nav-submenu" aria-hidden="true">
+              {% for _link in section_links %}
+              <li>
+                <a href="{% if _link.external %}{{ _link.href }}{% else %}{{ _link.href | relative_url }}{% endif %}">{{ _link.text }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <a class="usa-nav-link{% if _section.href == page.permalink %} usa-current{% endif %}" href="{% if _section.external %}{{ _section.href }}{% else %}{{ _section.href | relative_url }}{% endif %}">
+              {{ _section.text }}
+            </a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+</header>
+<div class="usa-overlay"></div>
+{% endif %}
